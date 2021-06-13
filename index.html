@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="付腾飞" />
+
+
+    
+    
+
+
+<meta name="description" content="一个DBA的工作学习笔记">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一个DBA的工作学习笔记">
+<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:site_name" content="一个DBA的工作学习笔记">
+<meta property="og:description" content="一个DBA的工作学习笔记">
+<meta property="og:locale">
+<meta property="article:author" content="付腾飞">
+<meta name="twitter:card" content="summary">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="一个DBA的工作学习笔记" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>一个DBA的工作学习笔记</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: false,
+        isHome: true,
+        isPost: false,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?591c46a8271a85b8b13ca893fd7973e0";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+            <h1 class="header-author">
+                <a href="/">
+                    
+                </a>
+            </h1>
+        </hgroup>
+
+        <br>
+
+        
+
+                <br>
+
+                
+                    <form id="search-form">
+                        <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+                        <i class="fa fa-times" onclick="resetSearch()"></i>
+                    </form>
+                    <div id="local-search-result"></div>
+                    <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+                    
+
+
+                        
+                            <div id="switch-btn" class="switch-btn">
+                                <div class="icon">
+                                    <div class="icon-ctn">
+                                        <div class="icon-wrap icon-house" data-idx="0">
+                                            <div class="birdhouse"></div>
+                                            <div class="birdhouse_holes"></div>
+                                        </div>
+                                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                                            <div class="ribbon"></div>
+                                        </div>
+                                        
+                                            <div class="icon-wrap icon-link hide" data-idx="2">
+                                                <div class="loopback_l"></div>
+                                                <div class="loopback_r"></div>
+                                            </div>
+                                            
+                                                
+                                                    <div class="icon-wrap icon-me hide" data-idx="3">
+                                                        <div class="user"></div>
+                                                        <div class="shoulder"></div>
+                                                    </div>
+                                                    
+                                    </div>
+
+                                </div>
+                                <div class="tips-box hide">
+                                    <div class="tips-arrow"></div>
+                                    <ul class="tips-inner">
+                                        <li>
+                                            菜单
+                                        </li>
+                                        <li>
+                                            标签
+                                        </li>
+                                        
+                                            <li>
+                                                友情链接
+                                            </li>
+                                            
+                                                
+                                                    <li>
+                                                        关于我
+                                                    </li>
+                                                    
+                                    </ul>
+                                </div>
+                            </div>
+                            
+
+                                <div id="switch-area" class="switch-area">
+                                    <div class="switch-wrap">
+                                        <section class="switch-part switch-part1">
+                                            <nav class="header-menu">
+                                                <ul>
+                                                    
+                                                        <li>
+                                                            <a href="/">
+                                                                主页
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/archives/">
+                                                                所有文章
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/tags/">
+                                                                标签云
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/about/">
+                                                                关于我
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/resume">
+                                                                个人简历
+                                                            </a>
+                                                        </li>
+                                                        
+                                                </ul>
+                                            </nav>
+                                            <nav class="header-nav">
+                                                <ul class="social">
+                                                    
+                                                        <a class="fa QQ" target="_blank" rel="noopener" href="http://sighttp.qq.com/msgrd?v=1&uin=2899109958" title="QQ"></a>
+                                                        
+                                                        <a class="fa Email" href="mailto:2899109958@qq.com" title="Email"></a>
+                                                        
+                                                        <a class="fa GitHub" href="/dbafu.github.io" title="GitHub"></a>
+                                                        
+                                                </ul>
+                                            </nav>
+                                        </section>
+
+                                        
+                                            <section class="switch-part switch-part2">
+                                                <div class="widget tagcloud" id="js-tagcloud">
+                                                    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaEE/" rel="tag">JavaEE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsp/" rel="tag">Jsp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Webpack/" rel="tag">Webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/" rel="tag">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E6%8F%92%E4%BB%B6/" rel="tag">hexo插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jsp/" rel="tag">jsp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/" rel="tag">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/svn/" rel="tag">svn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag1/" rel="tag">tag1</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag2/" rel="tag">tag2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag3/" rel="tag">tag3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/test/" rel="tag">test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%90%86/" rel="tag">代理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" rel="tag">图像识别</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">图像预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5/" rel="tag">异步</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BC%94%E7%A4%BA/" rel="tag">演示</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="tag">网络编程</a></li></ul>
+                                                </div>
+                                            </section>
+                                            
+
+                                                
+                                                    <section class="switch-part switch-part3">
+                                                        <div id="js-friends">
+                                                            
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://hexo.io">
+                                                                    Hexo
+                                                                </a>
+                                                                
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://pages.github.com/">
+                                                                    GitHub
+                                                                </a>
+                                                                
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">
+                                                                    MOxFIVE
+                                                                </a>
+                                                                
+                                                        </div>
+                                                    </section>
+                                                    
+
+                                                        
+                                                            
+                                                                        <section class="switch-part switch-part4">
+                                                                            
+                                                                                <div id="js-aboutme">
+                                                                                    专注于前端
+                                                                                </div>
+                                                                        </section>
+                                                                        
+                                    </div>
+                                </div>
+
+        
+                
+                    <div class="category-block">
+                    <h3 class="asidetitle">分类 ：</h3>
+                      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Markdown/">Markdown</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/Docker/">Docker</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Webpack/">Webpack</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/jsp/">jsp</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/jsp/Tomcat/">Tomcat</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/react-native/">react-native</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/test1/">test1</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/test1/test2/">test2</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/test1/test2/test3/">test3</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">图像识别</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">验证码识别</a><span class="category-list-count">1</span></li></ul>
+                    </div>
+                    
+                    
+
+    </header>
+</div>
+
+    </div>
+    <div class="mid-col">
+      
+        <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/resume">个人简历</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa QQ" target="_blank" href="http://sighttp.qq.com/msgrd?v=1&uin=2899109958" title="QQ"></a>
+                            
+                                <a class="fa Email" target="_blank" href="mailto:2899109958@qq.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="/dbafu.github.io" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+        <div class="body-wrap">
+  
+    <article id="post-在MacOS-10-14-1下搭建react-native开发环境" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/11/10/%E5%9C%A8MacOS-10-14-1%E4%B8%8B%E6%90%AD%E5%BB%BAreact-native%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" class="article-date">
+      <time datetime="2018-11-10T12:31:28.000Z" itemprop="datePublished">2018-11-10</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/10/%E5%9C%A8MacOS-10-14-1%E4%B8%8B%E6%90%AD%E5%BB%BAreact-native%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">在MacOS 10.14.1下搭建react-native开发环境</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="目标环境："><a href="#目标环境：" class="headerlink" title="目标环境："></a>目标环境：</h2><p>写此文是因为连搭环境都会有不少坑出来。<br>本文使用脚手架是 react-native-cli<br>而react-native 的官方文档在2018年11月10日12:41:13时已经是 <code>expo</code>, 其安装方式如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g expo-cli</span><br></pre></td></tr></table></figure>
+<p>这个工具我还不太熟悉，其文档地址在此 <a target="_blank" rel="noopener" href="https://facebook.github.io/react-native/docs/getting-started">https://facebook.github.io/react-native/docs/getting-started</a> , 稍后再切换到 <strong>expo</strong>, 下面主要是对  react-native 的介绍。</p>
+<blockquote>
+<p>macOS 10.14.1<br>react-native  0.57.4<br>react-native-cli 2.0.1</p>
+</blockquote>
+<h2 id="安装步骤："><a href="#安装步骤：" class="headerlink" title="安装步骤："></a>安装步骤：</h2><h3 id="1-安装-HomeBrew"><a href="#1-安装-HomeBrew" class="headerlink" title="1 安装 HomeBrew"></a>1 安装 HomeBrew</h3><p>官网： <a target="_blank" rel="noopener" href="https://brew.sh/">https://brew.sh/</a> </p>
+<p>在终端粘贴下面的命令安装 homebrew</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>当然 HomeBrew 得到默认仓库也在国外，嫌网速慢，等待蛋疼可以参考下面操作，更改HomeBrew 仓库为清华镜像</p>
+<blockquote>
+<p>Homebrew-bottles 镜像使用帮助<br><a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/help/homebrew-bottles/">https://mirrors.tuna.tsinghua.edu.cn/help/homebrew-bottles/</a><br>替换现有上游<br><a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/help/homebrew/">https://mirrors.tuna.tsinghua.edu.cn/help/homebrew/</a></p>
+</blockquote>
+<p>下面使用 brew 安装软件不需要 sudo 前缀，只有在使用 npm 全局安装模块的时候才需要管理员权限。</p>
+<h3 id="2-安装-nodejs"><a href="#2-安装-nodejs" class="headerlink" title="2  安装 nodejs"></a>2  安装 nodejs</h3><ol>
+<li> 虽然使用 brew 也可以安装 nodejs，但是brew 我不熟悉，我选择去nodejs 官网<a target="_blank" rel="noopener" href="https://nodejs.org/en/">https://nodejs.org/en/</a>下载 nodejs 的pkg安装包,我一般选择LTS版本。写此文时nodejs的LTS版本为 <code>10.13.0 LTS</code></li>
+</ol>
+<p>也给出brew 安装 nodejs的命令。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install node</span><br></pre></td></tr></table></figure>
+<p>安装完 nodejs 的第二件事就是切换 npm 仓库为淘宝，你可以百度 npm taobao 找到方法，或者使用一个简单的方法，使用 <code>nrm</code>，nrm 的更详细信息自己百度。只简单介绍一下方法.</p>
+<ol>
+<li>安装 nrm </li>
+</ol>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo npm i -g nrm</span><br><span class="line">nrm ls   <span class="comment"># 查看所有可以使用的仓库</span></span><br><span class="line">nrm use taobao.    <span class="comment"># 使用taobao 镜像仓库</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>安装其他必用的模块</li>
+</ol>
+  <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo npm i -g yarn vue-cli webpack webpack-cli hexo-cli   <span class="comment"># yarn 可以缓存模块要比 npm 速度快很多，剩下的是我必用的</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-安装-watchman，flow"><a href="#2-安装-watchman，flow" class="headerlink" title="2  安装 watchman，flow"></a>2  安装 watchman，flow</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install watchman </span><br><span class="line">brew install flow</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-安装-react-native-cli"><a href="#3-安装-react-native-cli" class="headerlink" title="3 安装 react-native-cli"></a>3 安装 react-native-cli</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo npm i -g react-native-cli</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装-Xcode-以及-Xcode-command-line-tools"><a href="#安装-Xcode-以及-Xcode-command-line-tools" class="headerlink" title="安装 Xcode 以及 Xcode command line tools"></a>安装 Xcode 以及 Xcode command line tools</h3><ol>
+<li>在 Mac App store 里面搜索 Xcode 下载并且安装。</li>
+<li>在终端运行下面命令安装 command linetools<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="安装-Android-Studio"><a href="#安装-Android-Studio" class="headerlink" title="安装 Android Studio"></a>安装 Android Studio</h3><p>到 Android 开发者网站下载 Android studio。 默认是访问不到的，但是Google的中文域名可以访问地址： <a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/">https://developer.android.google.cn/studio/</a></p>
+<p>下载完后需要安装 sdk ， 并且新建一个模拟器<br>默认情况下会遇到一个 sdk 路径找不到的问题：</p>
+<blockquote>
+<p>解决方法参考了这里：<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c04ac43f5021">https://www.jianshu.com/p/c04ac43f5021</a><br>解决方法：在工程的根目录下的android文件下新建一个local.properties的文件，在文件中写入</p>
+</blockquote>
+<blockquote>
+<p>sdk.dir = /Users/jinwenfeng/Documents/android/android-sdk-macosx</p>
+</blockquote>
+<blockquote>
+<p>这里就是androidsdk的路径，至此问题一成功解决</p>
+</blockquote>
+<blockquote>
+<p>打开Android studio，点击“File”菜单下的“Other Settings”，接着点击“Default Project Structure”选项。<br>这时就会看到SDK Location，点击图示第二个红色区域的图标，就可以修改默认的AndroidSDK路径。<br><a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/c1465413e068770bfcfc4cfb.html">https://jingyan.baidu.com/article/c1465413e068770bfcfc4cfb.html</a>  </p>
+</blockquote>
+<h2 id="新建一个-react-native-项目"><a href="#新建一个-react-native-项目" class="headerlink" title="新建一个 react-native 项目"></a>新建一个 react-native 项目</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">react-native init FirstApp</span><br><span class="line"><span class="built_in">cd</span> FirstApp</span><br></pre></td></tr></table></figure>
+
+<h2 id="运行-ios-App"><a href="#运行-ios-App" class="headerlink" title="运行 ios App"></a>运行 ios App</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">react-native run-ios</span><br></pre></td></tr></table></figure>
+<p>此时不出意外会出错：</p>
+<blockquote>
+<p>Print: Entry, “:CFBundleIdentifier”, Does Not Exist<br>from ： <a target="_blank" rel="noopener" href="http://bbs.reactnative.cn/topic/4301/ios-rn-0-45%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC%E6%89%80%E9%9C%80%E7%9A%84%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BC%96%E8%AF%91%E5%BA%93-boost%E7%AD%89/2">http://bbs.reactnative.cn/topic/4301/ios-rn-0-45%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC%E6%89%80%E9%9C%80%E7%9A%84%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BC%96%E8%AF%91%E5%BA%93-boost%E7%AD%89/2</a><br>原因是因为 在家目录 ~/.rncache 里面文件没有下载完整<br>这些文件的说明在这里，GitHub仓库 react-native的script文件夹下有关于iOS 第三方依赖的说明，以及文件下载地址：<br><a target="_blank" rel="noopener" href="https://github.com/facebook/react-native/blob/0.57-stable/scripts/ios-install-third-party.sh">https://github.com/facebook/react-native/blob/0.57-stable/scripts/ios-install-third-party.sh</a><br>下载里面的依赖文件放到 ~/.rncache里面，同时删除 iOS文件里面的build文件和项目文件夹下的node_modules文件，运行 yarn install 重新安装 node依赖<br>另外上面提到的iOS依赖里面有一个 boost_1_63_0.tar.gz  的下载是下载网址<a target="_blank" rel="noopener" href="http://www.boost.org/users/history/version_1_63_0.html">http://www.boost.org/users/history/version_1_63_0.html</a> 如果上面的下载地址有问题的话</p>
+</blockquote>
+<h2 id="运行-Android-App"><a href="#运行-Android-App" class="headerlink" title="运行 Android App"></a>运行 Android App</h2><p>运行 Android App 需要先开启模拟器，</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /Users/x/Library/Android/sdk/emulator    <span class="comment">#可以把这个目录添加到path里面</span></span><br><span class="line">vi ~/.bashrc.    <span class="comment"># 修改 ~/.bash_profile  或者 ~/.zshrc</span></span><br><span class="line">.<span class="comment"># Android 模拟器 在上面的 如果你用bash 就修改 .bash_profile 如果你用 oh-my-zsh就修改zshrc</span></span><br><span class="line"><span class="built_in">export</span> PATH=/Users/x/Library/Android/sdk/emulator:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">source</span>  ~/.bashrc   <span class="comment"># or</span></span><br><span class="line">.  ~/zshrc  <span class="comment"># 使修改生效 这样就可以直接使用 emulator命令了</span></span><br><span class="line">emulator -list-avds   <span class="comment"># 列出所有的虚拟设备</span></span><br><span class="line">emulator -avd Nexus_5X_API_28   <span class="comment"># 我的名字就起的有点长了略微蛋疼</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">react-native run-android</span><br></pre></td></tr></table></figure>
+
+<p>会出现的问题在上面安装 Android Studio时已经提到，也给出了解决方法，主要是要先创建一个虚拟机或者模拟器，打开模拟器后退出Android studio，<br>然后运行命令行即可。</p>
+<h2 id="安装-NDK"><a href="#安装-NDK" class="headerlink" title="安装 NDK"></a>安装 NDK</h2><p>react-native ： <a target="_blank" rel="noopener" href="https://github.com/facebook/react-native">https://github.com/facebook/react-native</a> 代码库里面 examples 需要使用 ndk ，而且不是最新版本 需要下载 10e 这个旧版本。<br>Android的SDK 会在安装 Android Studio 时安装，但是 NDK 不会。需要单独安装，</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/react-native/">react-native</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/react/" rel="tag">react</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-使用webpack搭建es6环境-20180902" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/09/03/%E4%BD%BF%E7%94%A8webpack%E6%90%AD%E5%BB%BAes6%E7%8E%AF%E5%A2%83-20180902/" class="article-date">
+      <time datetime="2018-09-02T21:07:02.000Z" itemprop="datePublished">2018-09-02</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/03/%E4%BD%BF%E7%94%A8webpack%E6%90%AD%E5%BB%BAes6%E7%8E%AF%E5%A2%83-20180902/">使用webpack搭建es6环境 --20180902</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h1 id="关于-es6-环境的搭建"><a href="#关于-es6-环境的搭建" class="headerlink" title="关于 es6 环境的搭建"></a>关于 es6 环境的搭建</h1><blockquote>
+<p>date： 2018年08月29日09:18:12. author: 付腾飞</p>
+</blockquote>
+<blockquote>
+<p>我的系统是 Mac 下面的一些操作，如果在win下 需要自己自行做对应的操作，我在命令行里面的文件夹或者文件操作，你可以使用鼠标来完成，或者在win下的git-bash下和我一样敲命令。</p>
+</blockquote>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li>要安装nodejs<br>Mac或者win系统去官网找安装包，安装即可，Linux的安装方法以后补充</li>
+<li>安装 <code>nre</code>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">npm i -g nre  # 用来切换  npm 仓库地址</span><br><span class="line">nre ls</span><br><span class="line">nre use</span><br><span class="line">nre help</span><br><span class="line"></span><br><span class="line">nre use taobao  # 切换 npm  仓库为 淘宝</span><br><span class="line">npm i -g yarn   # yarn 作用和 npm 仓库差不多， 个人觉得 yarn 安装东西比 npm 略微快</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="初始化一个文件夹"><a href="#初始化一个文件夹" class="headerlink" title="初始化一个文件夹"></a>初始化一个文件夹</h2></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir demodir</span><br><span class="line">cd demodir</span><br><span class="line">npm init  # 一步一步一步的的来</span><br><span class="line">npm init -y   # 一步到位  该命令执行完毕会在根目录生成一个 package.json 文件</span><br></pre></td></tr></table></figure>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Webpack/">Webpack</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Webpack/" rel="tag">Webpack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/es6/" rel="tag">es6</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/09/03/%E4%BD%BF%E7%94%A8webpack%E6%90%AD%E5%BB%BAes6%E7%8E%AF%E5%A2%83-20180902/#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-SVN-学习记录" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/01/06/SVN-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="article-date">
+      <time datetime="2018-01-06T15:54:07.000Z" itemprop="datePublished">2018-01-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/06/SVN-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">SVN 学习记录</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>subversion 是一个集中式的版本管理系统，它拓扑结构为星状网络，可以架构在 Mac, win, linux系统上。可以在任意操作系统中使用客户端访问有任意系统搭建的服务端。</p>
+<p>一般情况下个人不需要安装 svn 的服务器端，只需要安装客户端即可。本文顺带记录了Windows 下的安装。重点放在Linux下。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/svn/" rel="tag">svn</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/01/06/SVN-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-在centos6-9下为Java-ee配置运行环境" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/In-centos6.9-Java-ee-configuration-operating%20environment" class="article-date">
+      <time datetime="2018-01-05T16:00:40.000Z" itemprop="datePublished">2018-01-05</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/In-centos6.9-Java-ee-configuration-operating%20environment">在centos6.9下为Java-ee配置运行环境</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="1-下载-centos6-8-镜像"><a href="#1-下载-centos6-8-镜像" class="headerlink" title="1 下载 centos6.8 镜像"></a>1 下载 centos6.8 镜像</h2><blockquote>
+<p>前往官网下载地址下载。<br><a target="_blank" rel="noopener" href="https://wiki.centos.org/Download">https://wiki.centos.org/Download</a><br><a target="_blank" rel="noopener" href="http://vault.centos.org/6.8/isos/x86_64/">http://vault.centos.org/6.8/isos/x86_64/</a><br><a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/centos/6.9/isos/">https://mirrors.tuna.tsinghua.edu.cn/centos/6.9/isos/</a><br>直接下载这个也可以<br>64bit<br><a target="_blank" rel="noopener" href="http://archive.kernel.org/centos-vault/6.8/isos/x86_64/CentOS-6.8-x86_64-bin-DVD1.iso">http://archive.kernel.org/centos-vault/6.8/isos/x86_64/CentOS-6.8-x86_64-bin-DVD1.iso</a><br>32bit<br><a target="_blank" rel="noopener" href="http://archive.kernel.org/centos-vault/6.8/isos/i386/CentOS-6.8-i386-bin-DVD1.iso">http://archive.kernel.org/centos-vault/6.8/isos/i386/CentOS-6.8-i386-bin-DVD1.iso</a></p>
+</blockquote>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaEE/" rel="tag">JavaEE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jsp/" rel="tag">jsp</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/In-centos6.9-Java-ee-configuration-operating%20environment#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-mac-下使用设置eclipe和Tomcat-运行JSP" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Mac-use-settings-eclipse-and-Tomcat-to-run-JSP" class="article-date">
+      <time datetime="2018-01-01T19:26:31.000Z" itemprop="datePublished">2018-01-01</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Mac-use-settings-eclipse-and-Tomcat-to-run-JSP">mac 下使用设置eclipse和Tomcat 运行JSP</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="Mac-下搭建JSP环境"><a href="#Mac-下搭建JSP环境" class="headerlink" title="Mac 下搭建JSP环境"></a>Mac 下搭建JSP环境</h2>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/jsp/">jsp</a><a class="article-category-link" href="/categories/jsp/Tomcat/">Tomcat</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jsp/" rel="tag">Jsp</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Mac-use-settings-eclipse-and-Tomcat-to-run-JSP#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-基于Python的Selenium自动化—-实现验证码截取" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Selenium-Automation-Based-on-Python---Capturing-Code-Captures" class="article-date">
+      <time datetime="2017-12-29T00:17:21.000Z" itemprop="datePublished">2017-12-29</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Selenium-Automation-Based-on-Python---Capturing-Code-Captures">基于Python的Selenium自动化— 实现验证码截取</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="一、截取验证码"><a href="#一、截取验证码" class="headerlink" title="一、截取验证码"></a>一、截取验证码</h2><p>selenium webdriver 的api中直接提供了截图的方法.但是是全屏，要实现对元素的截取，则需要绕一绕弯. </p>
+<p>1、获取到元素的大小、元素的坐标<br>2、截取整屏<br>3、根据元素的坐标和大小，定位要剪裁的区域<br>4、使用图像库对元素区域进行剪裁 </p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">图像识别</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">图像预处理</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Selenium-Automation-Based-on-Python---Capturing-Code-Captures#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-把抓到数据存起来——爬虫绝配mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Save-the-data-to-catch---reptile-mongodb" class="article-date">
+      <time datetime="2017-12-25T18:14:51.000Z" itemprop="datePublished">2017-12-25</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Save-the-data-to-catch---reptile-mongodb">把抓到数据存起来——爬虫绝配mongodb</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="mongodb"><a href="#mongodb" class="headerlink" title="mongodb"></a>mongodb</h2><p>分布式<br>松散数据结构（json）<br>查询语言强大</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Save-the-data-to-catch---reptile-mongodb#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-python-数据结构之堆及其实现" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Heap-python-data-structure-and-its-realization" class="article-date">
+      <time datetime="2017-12-25T15:44:42.000Z" itemprop="datePublished">2017-12-25</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Heap-python-data-structure-and-its-realization">python 数据结构之堆及其实现</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="关于堆的介绍"><a href="#关于堆的介绍" class="headerlink" title="关于堆的介绍"></a>关于堆的介绍</h2><ul>
+<li>堆是一个二叉树</li>
+<li>叶子节点只存在最下面两层。</li>
+<li>从根节点到倒数第二层，是一个完全二叉树。</li>
+<li>一个节点不可能只有右孩子。</li>
+<li>一个节点的左孩子和右孩子都比这个节点大（或者小）</li>
+</ul>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Heap-python-data-structure-and-its-realization#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-python-数据结构之排序" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/python-data-structure-of-sort-structure-of-the-tree" class="article-date">
+      <time datetime="2017-12-24T00:06:46.000Z" itemprop="datePublished">2017-12-24</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/python-data-structure-of-sort-structure-of-the-tree">python 数据结构之排序</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>在计算机科学中，排序更是随处可见。记录几个最常见的。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/python-data-structure-of-sort-structure-of-the-tree#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-python-数据结构之树" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/python-data-structure-of-the-tree" class="article-date">
+      <time datetime="2017-12-23T23:55:03.000Z" itemprop="datePublished">2017-12-23</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/python-data-structure-of-the-tree">python 数据结构之树</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>用Python实现二叉树 遍历</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/python-data-structure-of-the-tree#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-python-数据结构之队列和栈" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/python-data-structure-of-the-queue-and-stack" class="article-date">
+      <time datetime="2017-12-23T23:24:20.000Z" itemprop="datePublished">2017-12-23</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/python-data-structure-of-the-queue-and-stack">python 数据结构之队列和栈</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>用Python实现队列和栈</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/python-data-structure-of-the-queue-and-stack#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-最新Python异步编程详解-转载" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/The-latest-Python-asynchronous-programming-Detailed--reproduced" class="article-date">
+      <time datetime="2017-12-21T23:29:25.000Z" itemprop="datePublished">2017-12-21</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/The-latest-Python-asynchronous-programming-Detailed--reproduced">最新Python异步编程详解-转载</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>我们都知道对于I/O相关的程序来说，异步编程可以大幅度的提高系统的吞吐量，因为在某个I/O操作的读写过程中，系统可以先去处理其它的操作（通常是其它的I/O操作），那么Python中是如何实现异步编程的呢？</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5/" rel="tag">异步</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/The-latest-Python-asynchronous-programming-Detailed--reproduced#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Python-aiohttp百万并发-转载" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Python-aiohttp-millions-of-concurrent--reproduced" class="article-date">
+      <time datetime="2017-12-21T11:11:25.000Z" itemprop="datePublished">2017-12-21</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Python-aiohttp-millions-of-concurrent--reproduced">Python-aiohttp百万并发-转载</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <blockquote>
+<p>本文是转载，合并了上下为一篇，这是我看到的最不啰嗦，最易理解的关于并发的文章。</p>
+</blockquote>
+<p>出处：</p>
+<blockquote>
+</blockquote>
+<p>Python-aiohttp百万并发(上) <a target="_blank" rel="noopener" href="https://www.topjishu.com/10935.html">https://www.topjishu.com/10935.html</a></p>
+<blockquote>
+</blockquote>
+<p>Python-aiohttp百万并发(下) <a target="_blank" rel="noopener" href="https://www.topjishu.com/10938.html">https://www.topjishu.com/10938.html</a></p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5/" rel="tag">异步</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="tag">网络编程</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Python-aiohttp-millions-of-concurrent--reproduced#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-写了一个hexo-标题翻译的Python脚本" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Wrote-a-hexo-title-translation-Python-script" class="article-date">
+      <time datetime="2017-12-20T22:13:48.000Z" itemprop="datePublished">2017-12-20</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Wrote-a-hexo-title-translation-Python-script">写了一个hexo 标题翻译的Python脚本</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hexo 有一个插件叫做hexo-translate-title，可以把中文标题翻译为英文，并作为该文的网址，<br>我觉得用英文网址会显的有逼格，所以就有了这篇文章。</p>
+<h2 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h2><p>hexo-translate-title 有时候会不起作用，不知道为什么。<br>github: <a target="_blank" rel="noopener" href="https://github.com/cometlj/hexo-translate-title">https://github.com/cometlj/hexo-translate-title</a></p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Wrote-a-hexo-title-translation-Python-script#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-使用scrapy-splash-重写煎蛋网图片爬虫" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler" class="article-date">
+      <time datetime="2017-12-19T22:12:53.000Z" itemprop="datePublished">2017-12-19</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler">使用scrapy splash 重写煎蛋网图片爬虫</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>这算是煎蛋网爬虫 V3 吧。</p>
+<p>PhantomJS 容易卡住，网上说是因为内存泄漏，但是我不太清楚。<br>可能是我使用的姿势不对，改用splash + scrapy，于是重新写一遍，<br>系统为 Mac，这是感觉速度还是挺快的。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-煎蛋网图片爬虫一枚" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/omelete-picture-crawler-one" class="article-date">
+      <time datetime="2017-12-18T18:34:37.000Z" itemprop="datePublished">2017-12-18</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/omelete-picture-crawler-one">煎蛋网图片爬虫一枚</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>我觉得学Python到现在，遇到了瓶颈：<br>1  Python的异步编程理解的还不够<br>2  Python数据结构和算法待提高</p>
+<p>随便找了网上的一些爬虫来练手，以查找自己弱点。<br>在简书看到一篇教程：<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/e30b714eca67">http://www.jianshu.com/p/e30b714eca67</a> （里面的代码已过时，主要是因为图片地址被JS加密），这为练手提供了目标。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/omelete-picture-crawler-one#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-hexo文章中插入图片" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/hexo-insert-images-in-the-article" class="article-date">
+      <time datetime="2017-12-16T23:49:21.000Z" itemprop="datePublished">2017-12-16</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hexo-insert-images-in-the-article">hexo文章中插入图片</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>之前我一直不知道怎么插入图片，现在知道了。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/hexo-insert-images-in-the-article#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-python识别验证码——一般的数字加字母验证码识别" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition" class="article-date">
+      <time datetime="2017-12-16T23:44:26.000Z" itemprop="datePublished">2017-12-16</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition">python识别验证码——一般的数字加字母验证码识别</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>关于验证码识别对于不带黏连的字符本文就可以解决，对于带有黏连的需要分割，这个需要深入学习，特便是边界识别，需要加强。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">验证码识别</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" rel="tag">图像识别</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-用Docker快速搭建Mysql多实例服务，并进行数据卷分离" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation" class="article-date">
+      <time datetime="2017-10-27T12:34:17.000Z" itemprop="datePublished">2017-10-27</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation">用Docker快速搭建Mysql多实例服务，并进行数据卷分离</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <blockquote>
+<p>在centos 里面编译安装MySQL多实例，编译时间太长，配置多实例也费尽，如果不是专门学习MySQL，而只是使用MySQL服务，使用docker 一条命令瞬间完成一个多实例，方便快捷，而且数据卷分离可以在docker容器外保存数据。<br>运行：<br>docker run -d –name myMysql2 -v ~/data/mysql2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -p 3308:3306 mysql<br>你就可以本机ip+3308端口访问MySQL，数据把存在本机指定的目录，本例为 ~/data/mysql2，root密码为123456</p>
+</blockquote>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a><a class="article-category-link" href="/categories/Mysql/Docker/">Docker</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-hexo博客添加常用插件" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/hexo-blog-to-ad-comon-plug-ins" class="article-date">
+      <time datetime="2017-10-26T18:54:57.000Z" itemprop="datePublished">2017-10-26</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hexo-blog-to-ad-comon-plug-ins">hexo博客添加常用插件</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>Hexo提供了诸多插件来增强博客体验，地址<code>http://hexo.io/plugins</code></p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/hexo/">hexo</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo%E6%8F%92%E4%BB%B6/" rel="tag">hexo插件</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/hexo-blog-to-ad-comon-plug-ins#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    </nav>
+  
+</div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-right">
+                <i class="fa fa-copyright"></i>
+                2017-2021 付腾飞
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+        
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

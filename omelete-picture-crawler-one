@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="付腾飞" />
+
+
+
+<meta name="description" content="我觉得学Python到现在，遇到了瓶颈：1  Python的异步编程理解的还不够2  Python数据结构和算法待提高 随便找了网上的一些爬虫来练手，以查找自己弱点。在简书看到一篇教程：http:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;e30b714eca67 （里面的代码已过时，主要是因为图片地址被JS加密），这为练手提供了目标。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="煎蛋网图片爬虫一枚">
+<meta property="og:url" content="http://example.com/omelete-picture-crawler-one">
+<meta property="og:site_name" content="一个DBA的工作学习笔记">
+<meta property="og:description" content="我觉得学Python到现在，遇到了瓶颈：1  Python的异步编程理解的还不够2  Python数据结构和算法待提高 随便找了网上的一些爬虫来练手，以查找自己弱点。在简书看到一篇教程：http:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;e30b714eca67 （里面的代码已过时，主要是因为图片地址被JS加密），这为练手提供了目标。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-12-18T18:34:37.000Z">
+<meta property="article:modified_time" content="2021-06-13T14:39:37.203Z">
+<meta property="article:author" content="付腾飞">
+<meta property="article:tag" content="爬虫">
+<meta name="twitter:card" content="summary">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="一个DBA的工作学习笔记" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>煎蛋网图片爬虫一枚 | 一个DBA的工作学习笔记</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: false,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?591c46a8271a85b8b13ca893fd7973e0";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+            <h1 class="header-author">
+                <a href="/">
+                    
+                </a>
+            </h1>
+        </hgroup>
+
+        <br>
+
+        
+
+                <br>
+
+                
+                    <form id="search-form">
+                        <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+                        <i class="fa fa-times" onclick="resetSearch()"></i>
+                    </form>
+                    <div id="local-search-result"></div>
+                    <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+                    
+
+
+                        
+                            <div id="switch-btn" class="switch-btn">
+                                <div class="icon">
+                                    <div class="icon-ctn">
+                                        <div class="icon-wrap icon-house" data-idx="0">
+                                            <div class="birdhouse"></div>
+                                            <div class="birdhouse_holes"></div>
+                                        </div>
+                                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                                            <div class="ribbon"></div>
+                                        </div>
+                                        
+                                            <div class="icon-wrap icon-link hide" data-idx="2">
+                                                <div class="loopback_l"></div>
+                                                <div class="loopback_r"></div>
+                                            </div>
+                                            
+                                                
+                                                    <div class="icon-wrap icon-me hide" data-idx="3">
+                                                        <div class="user"></div>
+                                                        <div class="shoulder"></div>
+                                                    </div>
+                                                    
+                                    </div>
+
+                                </div>
+                                <div class="tips-box hide">
+                                    <div class="tips-arrow"></div>
+                                    <ul class="tips-inner">
+                                        <li>
+                                            菜单
+                                        </li>
+                                        <li>
+                                            标签
+                                        </li>
+                                        
+                                            <li>
+                                                友情链接
+                                            </li>
+                                            
+                                                
+                                                    <li>
+                                                        关于我
+                                                    </li>
+                                                    
+                                    </ul>
+                                </div>
+                            </div>
+                            
+
+                                <div id="switch-area" class="switch-area">
+                                    <div class="switch-wrap">
+                                        <section class="switch-part switch-part1">
+                                            <nav class="header-menu">
+                                                <ul>
+                                                    
+                                                        <li>
+                                                            <a href="/">
+                                                                主页
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/archives/">
+                                                                所有文章
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/tags/">
+                                                                标签云
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/about/">
+                                                                关于我
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/resume">
+                                                                个人简历
+                                                            </a>
+                                                        </li>
+                                                        
+                                                </ul>
+                                            </nav>
+                                            <nav class="header-nav">
+                                                <ul class="social">
+                                                    
+                                                        <a class="fa QQ" target="_blank" rel="noopener" href="http://sighttp.qq.com/msgrd?v=1&uin=2899109958" title="QQ"></a>
+                                                        
+                                                        <a class="fa Email" href="mailto:2899109958@qq.com" title="Email"></a>
+                                                        
+                                                        <a class="fa GitHub" href="/dbafu.github.io" title="GitHub"></a>
+                                                        
+                                                </ul>
+                                            </nav>
+                                        </section>
+
+                                        
+                                            <section class="switch-part switch-part2">
+                                                <div class="widget tagcloud" id="js-tagcloud">
+                                                    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaEE/" rel="tag">JavaEE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsp/" rel="tag">Jsp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Webpack/" rel="tag">Webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/" rel="tag">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E6%8F%92%E4%BB%B6/" rel="tag">hexo插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jsp/" rel="tag">jsp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/" rel="tag">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/svn/" rel="tag">svn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag1/" rel="tag">tag1</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag2/" rel="tag">tag2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag3/" rel="tag">tag3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/test/" rel="tag">test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%90%86/" rel="tag">代理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" rel="tag">图像识别</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">图像预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5/" rel="tag">异步</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BC%94%E7%A4%BA/" rel="tag">演示</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="tag">网络编程</a></li></ul>
+                                                </div>
+                                            </section>
+                                            
+
+                                                
+                                                    <section class="switch-part switch-part3">
+                                                        <div id="js-friends">
+                                                            
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://hexo.io">
+                                                                    Hexo
+                                                                </a>
+                                                                
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://pages.github.com/">
+                                                                    GitHub
+                                                                </a>
+                                                                
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">
+                                                                    MOxFIVE
+                                                                </a>
+                                                                
+                                                        </div>
+                                                    </section>
+                                                    
+
+                                                        
+                                                            
+                                                                        <section class="switch-part switch-part4">
+                                                                            
+                                                                                <div id="js-aboutme">
+                                                                                    专注于前端
+                                                                                </div>
+                                                                        </section>
+                                                                        
+                                    </div>
+                                </div>
+
+        
+                
+                    <div class="category-block">
+                    <h3 class="asidetitle">分类 ：</h3>
+                      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Markdown/">Markdown</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/Docker/">Docker</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Webpack/">Webpack</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/jsp/">jsp</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/jsp/Tomcat/">Tomcat</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/react-native/">react-native</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/test1/">test1</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/test1/test2/">test2</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/test1/test2/test3/">test3</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">图像识别</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">验证码识别</a><span class="category-list-count">1</span></li></ul>
+                    </div>
+                    
+                    
+
+    </header>
+</div>
+
+    </div>
+    <div class="mid-col">
+      
+        <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/resume">个人简历</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa QQ" target="_blank" href="http://sighttp.qq.com/msgrd?v=1&uin=2899109958" title="QQ"></a>
+                            
+                                <a class="fa Email" target="_blank" href="mailto:2899109958@qq.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="/dbafu.github.io" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+        <div class="body-wrap"><article id="post-煎蛋网图片爬虫一枚" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/omelete-picture-crawler-one" class="article-date">
+      <time datetime="2017-12-18T18:34:37.000Z" itemprop="datePublished">2017-12-18</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      煎蛋网图片爬虫一枚
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>我觉得学Python到现在，遇到了瓶颈：<br>1  Python的异步编程理解的还不够<br>2  Python数据结构和算法待提高</p>
+<p>随便找了网上的一些爬虫来练手，以查找自己弱点。<br>在简书看到一篇教程：<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/e30b714eca67">http://www.jianshu.com/p/e30b714eca67</a> （里面的代码已过时，主要是因为图片地址被JS加密），这为练手提供了目标。</p>
+<span id="more"></span>
+<p>另外煎蛋网的网页内含比特币相关的关键字，不知道浏览网页会不会成为别人的挖矿机。</p>
+<p>图片地址html源码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">&quot;comment-3535962&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;row&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">                        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;author&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">strong</span></span></span><br><span class="line"><span class="tag">                                <span class="attr">title</span>=<span class="string">&quot;防伪码：5225042d3a74838ebc0ee0e742feba6989343de1&quot;</span> <span class="attr">class</span>=<span class="string">&quot;&quot;</span>&gt;</span>积极<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>                            <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">small</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#footer&quot;</span> <span class="attr">title</span>=<span class="string">&quot;@回复&quot;</span></span></span><br><span class="line"><span class="tag">                                      <span class="attr">onclick</span>=<span class="string">&quot;document.getElementById(&#x27;comment&#x27;).value += <span class="symbol">&amp;#39;</span>@<span class="symbol">&amp;lt;</span>a href=<span class="symbol">&amp;quot;</span>//jandan.net/ooxx/page-1#comment-3535962<span class="symbol">&amp;quot;</span><span class="symbol">&amp;gt;</span>积极<span class="symbol">&amp;lt;</span>/a<span class="symbol">&amp;gt;</span>: <span class="symbol">&amp;#39;</span>&quot;</span>&gt;</span>@4 months ago<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">small</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;text&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;righttext&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;//jandan.net/ooxx/page-1#comment-3535962&quot;</span>&gt;</span>3535962<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;//img.jandan.net/img/blank.gif&quot;</span> <span class="attr">onload</span>=<span class="string">&quot;jandan_load_img(this)&quot;</span> /&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;img-hash&quot;</span>&gt;</span>3c28QnMeyAwt3SrZqZiN8EqKYkRtaHOg3GopKMpHe3t+rjK6Vv0DQkgdTn88a1kbeSW0YJp9cUoYx8cgqxfdGB+tIBzAFl6DFAplt949Va4I14HwHxGS0A<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;jandan-vote&quot;</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;tucao-like-container&quot;</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">a</span> <span class="attr">title</span>=<span class="string">&quot;圈圈/支持&quot;</span> <span class="attr">href</span>=<span class="string">&quot;javascript:;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;comment-like like&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;3535962&quot;</span> <span class="attr">data-type</span>=<span class="string">&quot;pos&quot;</span>&gt;</span>OO<span class="tag">&lt;/<span class="name">a</span>&gt;</span> [<span class="tag">&lt;<span class="name">span</span>&gt;</span>12<span class="tag">&lt;/<span class="name">span</span>&gt;</span>]</span><br><span class="line">                            <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;tucao-unlike-container&quot;</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">a</span> <span class="attr">title</span>=<span class="string">&quot;叉叉/反对&quot;</span> <span class="attr">href</span>=<span class="string">&quot;javascript:;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;comment-unlike unlike&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;3535962&quot;</span> <span class="attr">data-type</span>=<span class="string">&quot;neg&quot;</span>&gt;</span>XX<span class="tag">&lt;/<span class="name">a</span>&gt;</span> [<span class="tag">&lt;<span class="name">span</span>&gt;</span>126<span class="tag">&lt;/<span class="name">span</span>&gt;</span>]</span><br><span class="line"></span><br><span class="line">                            <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;javascript:;&quot;</span> <span class="attr">class</span>=<span class="string">&quot;tucao-btn&quot;</span> <span class="attr">data-id</span>=<span class="string">&quot;3535962&quot;</span>&gt;</span> 吐槽 [1] <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看到这里了吗？<code>&lt;img src=&quot;//img.jandan.net/img/blank.gif&quot; onload=&quot;jandan_load_img(this)&quot; /&gt;&lt;span class=&quot;img-hash&quot;&gt;3c28QnMeyAwt3SrZqZiN8EqKYkRtaHOg3GopKMpHe3t+rjK6Vv0DQkgdTn88a1kbeSW0YJp9cUoYx8cgqxfdGB+tIBzAFl6DFAplt949Va4I14HwHxGS0A&lt;/span&gt;</code>  在网页的JS文件里面通过<code>onload</code>事件触发解密JS<br>我感觉使用Python模仿出来里面的解密函数对我来说有点困难，所以使用了PhantomJS处理，源码如下：</p>
+<h2 id="爬虫V1"><a href="#爬虫V1" class="headerlink" title="爬虫V1"></a>爬虫V1</h2><hr>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.desired_capabilities <span class="keyword">import</span> DesiredCapabilities</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</span><br><span class="line"></span><br><span class="line">cap = <span class="built_in">dict</span>(DesiredCapabilities.PHANTOMJS)</span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.resourceTimeout&quot;</span>] = <span class="number">1000</span></span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.loadImages&quot;</span>] = <span class="literal">True</span></span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.disk-cache&quot;</span>] = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.userAgent&quot;</span>] = <span class="string">&quot;Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0&quot;</span>,</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">driver = webdriver.PhantomJS(desired_capabilities=cap)</span><br><span class="line"></span><br><span class="line">img_count = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_img</span>(<span class="params">url, referer, host, filename</span>):</span></span><br><span class="line">    <span class="keyword">global</span> img_count</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36&quot;</span>,</span><br><span class="line">        <span class="string">&#x27;Host&#x27;</span>: host,</span><br><span class="line">        <span class="string">&#x27;Referer&#x27;</span>: referer</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;正在下载图片：&#x27;</span>, url)</span><br><span class="line"></span><br><span class="line">    img = requests.get(url, headers = headers)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;gif&#x27;</span> <span class="keyword">in</span> filename:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(BytesIO(img.content))</span><br><span class="line">        img.save(filename)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(img.content)</span><br><span class="line">    img_count += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;下载了&#x27;</span>, img_count, <span class="string">&#x27;张图片&#x27;</span>)</span><br><span class="line"></span><br><span class="line">img_pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;(?s);&quot;&gt;&lt;a href=&quot;(.*?)&quot;.*?view_img_link&quot;&gt;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">folder = <span class="string">&quot;ooxx&quot;</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(folder):</span><br><span class="line">  os.mkdir(folder)</span><br><span class="line">os.chdir(folder)</span><br><span class="line"></span><br><span class="line">urls = [<span class="string">&quot;http://jandan.net/ooxx/page-&#123;&#125;#comments&quot;</span>.<span class="built_in">format</span>(<span class="built_in">str</span>(i)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">391</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> urls:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;正在下载页面：&#x27;</span>, url)</span><br><span class="line">    driver.get(url)</span><br><span class="line">    referer = url.split(<span class="string">&#x27;#&#x27;</span>)[-<span class="number">2</span>]</span><br><span class="line">    response = driver.page_source</span><br><span class="line">    img_urls = img_pattern.findall(response)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(img_urls) &gt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">for</span> img_url <span class="keyword">in</span> img_urls:</span><br><span class="line">            filename = img_url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>]</span><br><span class="line">            img_host = img_url.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">2</span>]</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;正在下载:&#x27;</span>, filename, <span class="string">&#x27;.....&#x27;</span>)</span><br><span class="line">            url = <span class="string">&#x27;http:&#x27;</span> + img_url</span><br><span class="line">            get_img(url, referer, img_host, filename)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">driver.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>本次爬虫有一下遗憾：<br>1  使用了PhantomJS 加载网页，运行了很多不必要的JS代码，导致爬虫速度慢（如果可以写出解密函数，速度会变的更快）<br>2  PhantomJS 中途会卡住，暂时原因不明，第一次在p162卡主，第二次是在p193，暂时不知道怎么优化，<br>3  单进程单线程下载图片，没有使用异步多线程（这里可以优化，但是我暂时不知道怎么处理）<br>4  没有图片地址写出解密函数</p>
+<p>所以我会以此文为机会加强一下JS 的知识。。。回头给出第二种实现。</p>
+<p>附上JS 解密函数源码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> f_2zKCnAnHzB3YYiFuffz6OoAkXddvtD8v = <span class="function"><span class="keyword">function</span>(<span class="params">m, r, d</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> e = <span class="string">&quot;DECODE&quot;</span>;</span><br><span class="line">    <span class="keyword">var</span> r = r ? r: <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="keyword">var</span> d = d ? d: <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">var</span> q = <span class="number">4</span>;</span><br><span class="line">    r = md5(r);</span><br><span class="line">    <span class="keyword">var</span> o = md5(r.substr(<span class="number">0</span>, <span class="number">16</span>));</span><br><span class="line">    <span class="keyword">var</span> n = md5(r.substr(<span class="number">16</span>, <span class="number">16</span>));</span><br><span class="line">    <span class="keyword">if</span> (q) &#123;</span><br><span class="line">        <span class="keyword">if</span> (e == <span class="string">&quot;DECODE&quot;</span>) &#123;</span><br><span class="line">            <span class="keyword">var</span> l = m.substr(<span class="number">0</span>, q)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> l = <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> c = o + md5(o + l);</span><br><span class="line">    <span class="keyword">var</span> k;</span><br><span class="line">    <span class="keyword">if</span> (e == <span class="string">&quot;DECODE&quot;</span>) &#123;</span><br><span class="line">        m = m.substr(q);</span><br><span class="line">        k = base64_decode(m)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> h = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">256</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> g = <span class="number">0</span>; g &lt; <span class="number">256</span>; g++) &#123;</span><br><span class="line">        h[g] = g</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">new</span> <span class="built_in">Array</span>();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> g = <span class="number">0</span>; g &lt; <span class="number">256</span>; g++) &#123;</span><br><span class="line">        b[g] = c.charCodeAt(g % c.length)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> f = g = <span class="number">0</span>; g &lt; <span class="number">256</span>; g++) &#123;</span><br><span class="line">        f = (f + h[g] + b[g]) % <span class="number">256</span>;</span><br><span class="line">        tmp = h[g];</span><br><span class="line">        h[g] = h[f];</span><br><span class="line">        h[f] = tmp</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> t = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    k = k.split(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> p = f = g = <span class="number">0</span>; g &lt; k.length; g++) &#123;</span><br><span class="line">        p = (p + <span class="number">1</span>) % <span class="number">256</span>;</span><br><span class="line">        f = (f + h[p]) % <span class="number">256</span>;</span><br><span class="line">        tmp = h[p];</span><br><span class="line">        h[p] = h[f];</span><br><span class="line">        h[f] = tmp;</span><br><span class="line">        t += chr(ord(k[g]) ^ (h[(h[p] + h[f]) % <span class="number">256</span>]))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (e == <span class="string">&quot;DECODE&quot;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((t.substr(<span class="number">0</span>, <span class="number">10</span>) == <span class="number">0</span> || t.substr(<span class="number">0</span>, <span class="number">10</span>) - time() &gt; <span class="number">0</span>) &amp;&amp; t.substr(<span class="number">10</span>, <span class="number">16</span>) == md5(t.substr(<span class="number">26</span>) + n).substr(<span class="number">0</span>, <span class="number">16</span>)) &#123;</span><br><span class="line">            t = t.substr(<span class="number">26</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            t = <span class="string">&quot;&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="爬虫v2"><a href="#爬虫v2" class="headerlink" title="爬虫v2"></a>爬虫v2</h2><hr>
+<ul>
+<li>将下载部分的动作改为异步模式，感觉速度提升明显。</li>
+<li>该版本的问题就只出在PhantomJS 部分了，卡在p134页的解析哪里，暂时不知道原因，我会继续努力优化。</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.desired_capabilities <span class="keyword">import</span> DesiredCapabilities</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line">cap = <span class="built_in">dict</span>(DesiredCapabilities.PHANTOMJS)</span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.resourceTimeout&quot;</span>] = <span class="number">1000</span></span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.loadImages&quot;</span>] = <span class="literal">True</span></span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.disk-cache&quot;</span>] = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">cap[<span class="string">&quot;phantomjs.page.settings.userAgent&quot;</span>] = <span class="string">&quot;Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0&quot;</span>,</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">driver = webdriver.PhantomJS(desired_capabilities=cap)</span><br><span class="line"></span><br><span class="line">img_count = <span class="number">0</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">get_img</span>(<span class="params">url, referer, host, filename</span>):</span></span><br><span class="line">    <span class="keyword">global</span> img_count</span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36&quot;</span>,</span><br><span class="line">        <span class="string">&#x27;Host&#x27;</span>: host,</span><br><span class="line">        <span class="string">&#x27;Referer&#x27;</span>: referer</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;正在下载图片：&#x27;</span>, url)</span><br><span class="line"></span><br><span class="line">    img = requests.get(url, headers = headers)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;gif&#x27;</span> <span class="keyword">in</span> filename:</span><br><span class="line">        img = Image.<span class="built_in">open</span>(BytesIO(img.content))</span><br><span class="line">        img.save(filename)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(img.content)</span><br><span class="line">    img_count += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;下载了&#x27;</span>, img_count, <span class="string">&#x27;张图片&#x27;</span>)</span><br><span class="line"></span><br><span class="line">img_pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;(?s);&quot;&gt;&lt;a href=&quot;(.*?)&quot;.*?view_img_link&quot;&gt;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">folder = <span class="string">&quot;ooxx&quot;</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(folder):</span><br><span class="line">  os.mkdir(folder)</span><br><span class="line">os.chdir(folder)</span><br><span class="line"></span><br><span class="line">urls = [<span class="string">&quot;http://jandan.net/ooxx/page-&#123;&#125;#comments&quot;</span>.<span class="built_in">format</span>(<span class="built_in">str</span>(i)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">391</span>)]</span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> urls:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;正在下载页面：&#x27;</span>, url)</span><br><span class="line">    driver.get(url)</span><br><span class="line">    referer = url.split(<span class="string">&#x27;#&#x27;</span>)[-<span class="number">2</span>]</span><br><span class="line">    response = driver.page_source</span><br><span class="line">    img_urls = img_pattern.findall(response)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(img_urls) &gt; <span class="number">0</span>:</span><br><span class="line">        tasks = []</span><br><span class="line">        <span class="keyword">for</span> img_url <span class="keyword">in</span> img_urls:</span><br><span class="line">            filename = img_url.split(<span class="string">&#x27;/&#x27;</span>)[-<span class="number">1</span>]</span><br><span class="line">            img_host = img_url.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">2</span>]</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;正在下载:&#x27;</span>, filename, <span class="string">&#x27;.....&#x27;</span>)</span><br><span class="line">            url = <span class="string">&#x27;http:&#x27;</span> + img_url</span><br><span class="line">            task = asyncio.ensure_future(get_img(url, referer, img_host, filename))</span><br><span class="line">            tasks.append(task)</span><br><span class="line">        loop.run_until_complete(asyncio.wait(tasks))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">driver.close()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/omelete-picture-crawler-one">煎蛋网图片爬虫一枚</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2017-12-18, 18:34:37</p>
+        <p><span>最后更新:</span>2021-06-13, 22:39:37</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/omelete-picture-crawler-one" title="煎蛋网图片爬虫一枚">http://example.com/omelete-picture-crawler-one</a>
+            <span class="copy-path" data-clipboard-text="原文: http://example.com/omelete-picture-crawler-one　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler">
+                    使用scrapy splash 重写煎蛋网图片爬虫
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/hexo-insert-images-in-the-article">
+                    hexo文章中插入图片
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"煎蛋网图片爬虫一枚　| 一个DBA的工作学习笔记　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler" title="上一篇: 使用scrapy splash 重写煎蛋网图片爬虫">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/hexo-insert-images-in-the-article" title="下一篇: hexo文章中插入图片">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/%E5%9C%A8MacOS-10-14-1%E4%B8%8B%E6%90%AD%E5%BB%BAreact-native%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">在MacOS 10.14.1下搭建react-native开发环境</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/03/%E4%BD%BF%E7%94%A8webpack%E6%90%AD%E5%BB%BAes6%E7%8E%AF%E5%A2%83-20180902/">使用webpack搭建es6环境 --20180902</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/06/SVN-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">SVN 学习记录</a></li><li class="post-list-item"><a class="post-list-link" href="/In-centos6.9-Java-ee-configuration-operating%20environment">在centos6.9下为Java-ee配置运行环境</a></li><li class="post-list-item"><a class="post-list-link" href="/Mac-use-settings-eclipse-and-Tomcat-to-run-JSP">mac 下使用设置eclipse和Tomcat 运行JSP</a></li><li class="post-list-item"><a class="post-list-link" href="/Selenium-Automation-Based-on-Python---Capturing-Code-Captures">基于Python的Selenium自动化— 实现验证码截取</a></li><li class="post-list-item"><a class="post-list-link" href="/Save-the-data-to-catch---reptile-mongodb">把抓到数据存起来——爬虫绝配mongodb</a></li><li class="post-list-item"><a class="post-list-link" href="/Heap-python-data-structure-and-its-realization">python 数据结构之堆及其实现</a></li><li class="post-list-item"><a class="post-list-link" href="/python-data-structure-of-sort-structure-of-the-tree">python 数据结构之排序</a></li><li class="post-list-item"><a class="post-list-link" href="/python-data-structure-of-the-tree">python 数据结构之树</a></li><li class="post-list-item"><a class="post-list-link" href="/python-data-structure-of-the-queue-and-stack">python 数据结构之队列和栈</a></li><li class="post-list-item"><a class="post-list-link" href="/The-latest-Python-asynchronous-programming-Detailed--reproduced">最新Python异步编程详解-转载</a></li><li class="post-list-item"><a class="post-list-link" href="/Python-aiohttp-millions-of-concurrent--reproduced">Python-aiohttp百万并发-转载</a></li><li class="post-list-item"><a class="post-list-link" href="/Wrote-a-hexo-title-translation-Python-script">写了一个hexo 标题翻译的Python脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler">使用scrapy splash 重写煎蛋网图片爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/omelete-picture-crawler-one">煎蛋网图片爬虫一枚</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo-insert-images-in-the-article">hexo文章中插入图片</a></li><li class="post-list-item"><a class="post-list-link" href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition">python识别验证码——一般的数字加字母验证码识别</a></li><li class="post-list-item"><a class="post-list-link" href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation">用Docker快速搭建Mysql多实例服务，并进行数据卷分离</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo-blog-to-ad-comon-plug-ins">hexo博客添加常用插件</a></li><li class="post-list-item"><a class="post-list-link" href="/obtain-the-proxy-ip-neded-for-the-crawler">获取爬虫所需要的代理IP</a></li><li class="post-list-item"><a class="post-list-link" href="/markdown-11-kinds-of-basic-gramar-%5Bswitch%5D">Markdown 11 种基本语法  [转]</a></li><li class="post-list-item"><a class="post-list-link" href="/build-a-blog-using-hexo-and-github-pages">使用Hexo和github pages搭建博客</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo-change-the-theme-and-customization">hexo更换主题并个性化定制</a></li><li class="post-list-item"><a class="post-list-link" href="/mark-fly-like">马克飞象</a></li><li class="post-list-item"><a class="post-list-link" href="/markdown-cheatshet">Markdown Cheatsheet</a></li><li class="post-list-item"><a class="post-list-link" href="/helo-world">Hello World</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-right">
+                <i class="fa fa-copyright"></i>
+                2017-2021 付腾飞
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+        
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

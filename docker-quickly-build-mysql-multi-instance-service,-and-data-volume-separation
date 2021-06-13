@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="付腾飞" />
+
+
+
+<meta name="description" content="在centos 里面编译安装MySQL多实例，编译时间太长，配置多实例也费尽，如果不是专门学习MySQL，而只是使用MySQL服务，使用docker 一条命令瞬间完成一个多实例，方便快捷，而且数据卷分离可以在docker容器外保存数据。运行：docker run -d –name myMysql2 -v ~&#x2F;data&#x2F;mysql2:&#x2F;var&#x2F;lib&#x2F;mysql -e MYSQL_ROOT_PA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Docker快速搭建Mysql多实例服务，并进行数据卷分离">
+<meta property="og:url" content="http://example.com/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation">
+<meta property="og:site_name" content="一个DBA的工作学习笔记">
+<meta property="og:description" content="在centos 里面编译安装MySQL多实例，编译时间太长，配置多实例也费尽，如果不是专门学习MySQL，而只是使用MySQL服务，使用docker 一条命令瞬间完成一个多实例，方便快捷，而且数据卷分离可以在docker容器外保存数据。运行：docker run -d –name myMysql2 -v ~&#x2F;data&#x2F;mysql2:&#x2F;var&#x2F;lib&#x2F;mysql -e MYSQL_ROOT_PA">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-10-27T12:34:17.000Z">
+<meta property="article:modified_time" content="2021-06-13T14:39:37.204Z">
+<meta property="article:author" content="付腾飞">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="一个DBA的工作学习笔记" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>用Docker快速搭建Mysql多实例服务，并进行数据卷分离 | 一个DBA的工作学习笔记</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: false,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?591c46a8271a85b8b13ca893fd7973e0";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+            <h1 class="header-author">
+                <a href="/">
+                    
+                </a>
+            </h1>
+        </hgroup>
+
+        <br>
+
+        
+
+                <br>
+
+                
+                    <form id="search-form">
+                        <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+                        <i class="fa fa-times" onclick="resetSearch()"></i>
+                    </form>
+                    <div id="local-search-result"></div>
+                    <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+                    
+
+
+                        
+                            <div id="switch-btn" class="switch-btn">
+                                <div class="icon">
+                                    <div class="icon-ctn">
+                                        <div class="icon-wrap icon-house" data-idx="0">
+                                            <div class="birdhouse"></div>
+                                            <div class="birdhouse_holes"></div>
+                                        </div>
+                                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                                            <div class="ribbon"></div>
+                                        </div>
+                                        
+                                            <div class="icon-wrap icon-link hide" data-idx="2">
+                                                <div class="loopback_l"></div>
+                                                <div class="loopback_r"></div>
+                                            </div>
+                                            
+                                                
+                                                    <div class="icon-wrap icon-me hide" data-idx="3">
+                                                        <div class="user"></div>
+                                                        <div class="shoulder"></div>
+                                                    </div>
+                                                    
+                                    </div>
+
+                                </div>
+                                <div class="tips-box hide">
+                                    <div class="tips-arrow"></div>
+                                    <ul class="tips-inner">
+                                        <li>
+                                            菜单
+                                        </li>
+                                        <li>
+                                            标签
+                                        </li>
+                                        
+                                            <li>
+                                                友情链接
+                                            </li>
+                                            
+                                                
+                                                    <li>
+                                                        关于我
+                                                    </li>
+                                                    
+                                    </ul>
+                                </div>
+                            </div>
+                            
+
+                                <div id="switch-area" class="switch-area">
+                                    <div class="switch-wrap">
+                                        <section class="switch-part switch-part1">
+                                            <nav class="header-menu">
+                                                <ul>
+                                                    
+                                                        <li>
+                                                            <a href="/">
+                                                                主页
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/archives/">
+                                                                所有文章
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/tags/">
+                                                                标签云
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/about/">
+                                                                关于我
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li>
+                                                            <a href="/resume">
+                                                                个人简历
+                                                            </a>
+                                                        </li>
+                                                        
+                                                </ul>
+                                            </nav>
+                                            <nav class="header-nav">
+                                                <ul class="social">
+                                                    
+                                                        <a class="fa QQ" target="_blank" rel="noopener" href="http://sighttp.qq.com/msgrd?v=1&uin=2899109958" title="QQ"></a>
+                                                        
+                                                        <a class="fa Email" href="mailto:2899109958@qq.com" title="Email"></a>
+                                                        
+                                                        <a class="fa GitHub" href="/dbafu.github.io" title="GitHub"></a>
+                                                        
+                                                </ul>
+                                            </nav>
+                                        </section>
+
+                                        
+                                            <section class="switch-part switch-part2">
+                                                <div class="widget tagcloud" id="js-tagcloud">
+                                                    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaEE/" rel="tag">JavaEE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jsp/" rel="tag">Jsp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Webpack/" rel="tag">Webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/" rel="tag">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo%E6%8F%92%E4%BB%B6/" rel="tag">hexo插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/" rel="tag">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jsp/" rel="tag">jsp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/md/" rel="tag">md</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/" rel="tag">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/svn/" rel="tag">svn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag1/" rel="tag">tag1</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag2/" rel="tag">tag2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag3/" rel="tag">tag3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/test/" rel="tag">test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%90%86/" rel="tag">代理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/" rel="tag">图像识别</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">图像预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5/" rel="tag">异步</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BC%94%E7%A4%BA/" rel="tag">演示</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="tag">网络编程</a></li></ul>
+                                                </div>
+                                            </section>
+                                            
+
+                                                
+                                                    <section class="switch-part switch-part3">
+                                                        <div id="js-friends">
+                                                            
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://hexo.io">
+                                                                    Hexo
+                                                                </a>
+                                                                
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://pages.github.com/">
+                                                                    GitHub
+                                                                </a>
+                                                                
+                                                                <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">
+                                                                    MOxFIVE
+                                                                </a>
+                                                                
+                                                        </div>
+                                                    </section>
+                                                    
+
+                                                        
+                                                            
+                                                                        <section class="switch-part switch-part4">
+                                                                            
+                                                                                <div id="js-aboutme">
+                                                                                    专注于前端
+                                                                                </div>
+                                                                        </section>
+                                                                        
+                                    </div>
+                                </div>
+
+        
+                
+                    <div class="category-block">
+                    <h3 class="asidetitle">分类 ：</h3>
+                      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Markdown/">Markdown</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/Docker/">Docker</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Webpack/">Webpack</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/jsp/">jsp</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/jsp/Tomcat/">Tomcat</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/react-native/">react-native</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/test1/">test1</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/test1/test2/">test2</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/test1/test2/test3/">test3</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB/">图像识别</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">验证码识别</a><span class="category-list-count">1</span></li></ul>
+                    </div>
+                    
+                    
+
+    </header>
+</div>
+
+    </div>
+    <div class="mid-col">
+      
+        <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/resume">个人简历</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa QQ" target="_blank" href="http://sighttp.qq.com/msgrd?v=1&uin=2899109958" title="QQ"></a>
+                            
+                                <a class="fa Email" target="_blank" href="mailto:2899109958@qq.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="/dbafu.github.io" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+        <div class="body-wrap"><article id="post-用Docker快速搭建Mysql多实例服务，并进行数据卷分离" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation" class="article-date">
+      <time datetime="2017-10-27T12:34:17.000Z" itemprop="datePublished">2017-10-27</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      用Docker快速搭建Mysql多实例服务，并进行数据卷分离
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a><a class="article-category-link" href="/categories/Mysql/Docker/">Docker</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>在centos 里面编译安装MySQL多实例，编译时间太长，配置多实例也费尽，如果不是专门学习MySQL，而只是使用MySQL服务，使用docker 一条命令瞬间完成一个多实例，方便快捷，而且数据卷分离可以在docker容器外保存数据。<br>运行：<br>docker run -d –name myMysql2 -v ~/data/mysql2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -p 3308:3306 mysql<br>你就可以本机ip+3308端口访问MySQL，数据把存在本机指定的目录，本例为 ~/data/mysql2，root密码为123456</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="1-安装docker"><a href="#1-安装docker" class="headerlink" title="1  安装docker"></a>1  安装<a target="_blank" rel="noopener" href="https://www.docker.com/">docker</a></h2><p><strong>mac 和 win</strong></p>
+<p>去 安装<a target="_blank" rel="noopener" href="https://www.docker.com/">docker官网</a> 下载对应安装包安装</p>
+<p><strong>Ubuntu</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$sudo wget -qO- https://get/docker.com/ | sh</span><br><span class="line">$sudo usermod -aG docker current_username</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>#current_username是你当前的用户名，这样以后就可以免sudo  运行docker 命令了</p>
+</blockquote>
+<p>或者参考这里<a target="_blank" rel="noopener" href="http://www.imooc.com/learn/867">Docker入门</a></p>
+<h2 id="2-获取mysql镜像"><a href="#2-获取mysql镜像" class="headerlink" title="2  获取mysql镜像"></a>2  获取mysql镜像</h2><p>从docker hub的仓库中拉取mysql镜像</p>
+<p><code>docker pull mysql</code></p>
+<p>查看镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker images</span><br><span class="line"></span><br><span class="line">mysql latest 18f13d72f7f0 2 weeks ago 383.4 MB</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-运行mysql容器"><a href="#3-运行mysql容器" class="headerlink" title="3  运行mysql容器"></a>3  运行mysql容器</h2><p>** 3.1 运行第一个mysql实例的命令如下：**</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name myMysql -v ~/data/mysql1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -p 3307:3306 mysql</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>-d : –detach，后台运行。<br>–name : 为你的镜像创建一个别名，该别名用于更好操作。<br>-p : 映射端口，一般我们会将默认端口进行更改，避免与本机的mysql端口冲突，如果你宿主机有mysql，请更改端口，如 -p 3307:3306。  3307代表本地端口  3306为容器端口这是固定的（固定在MySQL官方镜像里），<br>-e : 环境变量。为mysql的root用户设置密码为123456。<br>-v : 指定数据卷，意思就是将mysql容器中的/var/lib/mysql（这个是数据库所有数据信息文件）映射到宿主机~/data/mysql里面。</p>
+</blockquote>
+<p>** 3.2 运行第二个mysql实例的命令如下：**</p>
+<p><em>只需要与第一个容器的的 –name 以及 本机数据目录, 映射的本机端口这3者不同即可</em></p>
+<p><code>docker run -d --name myMysql2 -v ~/data/mysql2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -p 3308:3306 mysql</code></p>
+<p><strong>在本机登陆到第一个实例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql -h 127.0.0.1 -P 3307 -u root -p</span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">mysql -h 192.168.0.116 -P 3307 -u root -p</span><br></pre></td></tr></table></figure>
+
+<p><strong>在本机登陆到第二个实例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql -h 127.0.0.1 -P 3308 -u root -p</span><br><span class="line"></span><br><span class="line">or</span><br><span class="line"></span><br><span class="line">mysql -h 192.168.0.116 -P 3308 -u root -p</span><br></pre></td></tr></table></figure>
+
+<p><strong>一定要指定 <code>ip</code> 参数，不可以省略 否则报错，连接失败</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p -P3307</span><br><span class="line">Enter password:</span><br><span class="line">ERROR 2002 (HY000): Can&#x27;t connect to local MySQL server through socket &#x27;/tmp/mysql.sock&#x27; (2)</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除容器，看数据卷是否还在</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker stop myMysql</span><br><span class="line">docker rm myMysql</span><br><span class="line"></span><br><span class="line">docker stop myMysql2</span><br><span class="line">docker rm myMysql2`</span><br></pre></td></tr></table></figure>
+
+<p>依然还在，这说明如果我们创建新的mysql容器，那么只需要指定数据卷就可以了。</p>
+<p><strong>从Docker登录MySQL的终端</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it myMysql /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>###登录数据库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+
+<p>使用MYSQL数据库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use mysql</span><br></pre></td></tr></table></figure>
+
+<p>查询MYSQL的root用户情况</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select host, user, plugin from user;</span><br></pre></td></tr></table></figure>
+
+<p>修改root用户插件验证方式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER USER ‘root‘@‘%‘ IDENTIFIED WITH mysql_native_password BY ‘xxxxxxxxxx‘;</span><br></pre></td></tr></table></figure>
+
+<p>刷新权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于MySQL 5.7版本以后的mysql数据库下已经没有password这个字段了，password字段改成了authentication_string，查询时使用authentication_string字段即可</p>
+</blockquote>
+<p>增加用户，授予权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant all on *.* to <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;1234&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这时一条授予权限命令，当用户不存在时，则会自动创建。<br>. 前一个*星号代表所有数据库，后一个星号代表所有数据表<br>‘test”@’% : test是用户名，%为所有IP。<br>identified by ‘1234’ : 密码设置为1234。</p>
+</blockquote>
+<h2 id="Docker-常用命令"><a href="#Docker-常用命令" class="headerlink" title="Docker 常用命令"></a>Docker 常用命令</h2><h3 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h3><p><code>docker ps</code></p>
+<blockquote>
+<p>主要有些参数要说一下</p>
+<ol>
+<li>不加参数，表示查看当前正在运行的容器</li>
+<li>-a，查看所有容器包括停止状态的容器</li>
+<li>-l，查看最新创建的容器</li>
+<li>-n=x，查看最后创建的x个容器</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>列一下docker ps的结果<br>CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES<br>这些分别代表什么<br>CONTAINER ID：容器ID，唯一标识容器<br>IMAGE：创建容器时所用的镜像<br>COMMAND：在容器最后运行的命令<br>CREATED：容器创建的时间<br>STATUS：容器的状态（你会看到UPXXX，表示运行状态）<br>PORTS：对外开放的端口号<br>NAMES：容器名（也具有唯一性，docker是不允许创建容器名相同的容器的）</p>
+</blockquote>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker start</span><br><span class="line">docker restart</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>我们在用docker ps -a的时候会看见一些容器的状态是CREATED的，这里就需要我们用 <code>docker start 容器名或容器ID</code> 来启动容器。但是需要注意，用这个命令后，容器进入运行状态，当容器完成任务后，会自己退出，进入停止状态。如果需要再次启动start命令<br>这里提一个参数，能够让容器在退出后能够自动重启<br><code>--restart</code> 这个参数会检查容器的退出码，并据此来决定是否要重启容器。<br>这里写图片描述<br>这个例子大家不要轻易尝试，这样会不停的输出hello world，用ctrl+C都没有停掉这个（这里过后好好想想为什么没有停掉？？？？？？？？？）<br>最后我开了另一个终端输入了<br><code>docker stop docker_restart</code> 才终止了容器</p>
+</blockquote>
+<h3 id="终止"><a href="#终止" class="headerlink" title="终止"></a>终止</h3><p>在上面也说了一下命令是</p>
+<p><code>docker stop 容器名或容器ID</code></p>
+<p>而这个<code>docker stop</code>命令是给容器进程发送一个<code>SIGTERM</code>信号（可捕捉），默认行为是容器退出。<br>如果要强行停止一个容器的话，最好用<code>docker kill</code>命令<br>它是发送一个<code>SIGKILL</code>信号（不可捕捉）</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p><code>命令：docker rm 容器名 </code><br>我们不能删除一个正在运行的容器，必须先 <code>docker stop``或者 </code>docker kill` 后我们才能删除.<br>当然如果我们加-f这个参数我们也是可以删除一个正在运行的容器的<br>如何一次删除所有容器docker没有给相关命令，但是我们可以这样<br>这里写图片描述<br>-q是只列出容器ID</p>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/57420240e877">使用Docker快速搭建Mysql，并进行数据卷分离</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/c24e3e5f5b58">使用docker运行mysql实例</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/4416792750c7">MySQL 5.7.19 编译安装与配置</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/u013246898/article/details/52945884">Docker学习笔记（四）之容器查看启动终止删除</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation">用Docker快速搭建Mysql多实例服务，并进行数据卷分离</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2017-10-27, 12:34:17</p>
+        <p><span>最后更新:</span>2021-06-13, 22:39:37</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation" title="用Docker快速搭建Mysql多实例服务，并进行数据卷分离">http://example.com/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation</a>
+            <span class="copy-path" data-clipboard-text="原文: http://example.com/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition">
+                    python识别验证码——一般的数字加字母验证码识别
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/hexo-blog-to-ad-comon-plug-ins">
+                    hexo博客添加常用插件
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"用Docker快速搭建Mysql多实例服务，并进行数据卷分离　| 一个DBA的工作学习笔记　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition" title="上一篇: python识别验证码——一般的数字加字母验证码识别">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/hexo-blog-to-ad-comon-plug-ins" title="下一篇: hexo博客添加常用插件">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/10/%E5%9C%A8MacOS-10-14-1%E4%B8%8B%E6%90%AD%E5%BB%BAreact-native%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">在MacOS 10.14.1下搭建react-native开发环境</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/03/%E4%BD%BF%E7%94%A8webpack%E6%90%AD%E5%BB%BAes6%E7%8E%AF%E5%A2%83-20180902/">使用webpack搭建es6环境 --20180902</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/06/SVN-%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">SVN 学习记录</a></li><li class="post-list-item"><a class="post-list-link" href="/In-centos6.9-Java-ee-configuration-operating%20environment">在centos6.9下为Java-ee配置运行环境</a></li><li class="post-list-item"><a class="post-list-link" href="/Mac-use-settings-eclipse-and-Tomcat-to-run-JSP">mac 下使用设置eclipse和Tomcat 运行JSP</a></li><li class="post-list-item"><a class="post-list-link" href="/Selenium-Automation-Based-on-Python---Capturing-Code-Captures">基于Python的Selenium自动化— 实现验证码截取</a></li><li class="post-list-item"><a class="post-list-link" href="/Save-the-data-to-catch---reptile-mongodb">把抓到数据存起来——爬虫绝配mongodb</a></li><li class="post-list-item"><a class="post-list-link" href="/Heap-python-data-structure-and-its-realization">python 数据结构之堆及其实现</a></li><li class="post-list-item"><a class="post-list-link" href="/python-data-structure-of-sort-structure-of-the-tree">python 数据结构之排序</a></li><li class="post-list-item"><a class="post-list-link" href="/python-data-structure-of-the-tree">python 数据结构之树</a></li><li class="post-list-item"><a class="post-list-link" href="/python-data-structure-of-the-queue-and-stack">python 数据结构之队列和栈</a></li><li class="post-list-item"><a class="post-list-link" href="/The-latest-Python-asynchronous-programming-Detailed--reproduced">最新Python异步编程详解-转载</a></li><li class="post-list-item"><a class="post-list-link" href="/Python-aiohttp-millions-of-concurrent--reproduced">Python-aiohttp百万并发-转载</a></li><li class="post-list-item"><a class="post-list-link" href="/Wrote-a-hexo-title-translation-Python-script">写了一个hexo 标题翻译的Python脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/Use-scrapy-splash-to-rewrite-the-omelette-web-crawler">使用scrapy splash 重写煎蛋网图片爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/omelete-picture-crawler-one">煎蛋网图片爬虫一枚</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo-insert-images-in-the-article">hexo文章中插入图片</a></li><li class="post-list-item"><a class="post-list-link" href="/python-identification-verification-code-the-general-number-plus-alphabet-verification-code-recognition">python识别验证码——一般的数字加字母验证码识别</a></li><li class="post-list-item"><a class="post-list-link" href="/docker-quickly-build-mysql-multi-instance-service,-and-data-volume-separation">用Docker快速搭建Mysql多实例服务，并进行数据卷分离</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo-blog-to-ad-comon-plug-ins">hexo博客添加常用插件</a></li><li class="post-list-item"><a class="post-list-link" href="/obtain-the-proxy-ip-neded-for-the-crawler">获取爬虫所需要的代理IP</a></li><li class="post-list-item"><a class="post-list-link" href="/markdown-11-kinds-of-basic-gramar-%5Bswitch%5D">Markdown 11 种基本语法  [转]</a></li><li class="post-list-item"><a class="post-list-link" href="/build-a-blog-using-hexo-and-github-pages">使用Hexo和github pages搭建博客</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo-change-the-theme-and-customization">hexo更换主题并个性化定制</a></li><li class="post-list-item"><a class="post-list-link" href="/mark-fly-like">马克飞象</a></li><li class="post-list-item"><a class="post-list-link" href="/markdown-cheatshet">Markdown Cheatsheet</a></li><li class="post-list-item"><a class="post-list-link" href="/helo-world">Hello World</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-right">
+                <i class="fa fa-copyright"></i>
+                2017-2021 付腾飞
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+        
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
